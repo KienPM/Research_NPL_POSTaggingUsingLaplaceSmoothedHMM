@@ -16,7 +16,7 @@ import model.Constant;
  */
 public class Util {
     public static String toTaggedForm(String input) {
-        return input.replaceAll("[\\[\\]]", "");
+        return input.replaceAll("[=\\[\\]]", " ");
     }
     
     public static String[] loadPennTreebank() throws FileNotFoundException {

@@ -8,6 +8,7 @@ package model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.Util;
@@ -20,7 +21,6 @@ import vn.hus.nlp.utils.UTF8FileUtility;
 public class Trainer {
 
     // stores the tags
-
     private String[] tags;
     // map tag and the order of appearance in tags array
     private HashMap<String, Integer> map;
@@ -55,17 +55,27 @@ public class Trainer {
                     content += lines[j] + " ";
                 }
                 content = Util.toTaggedForm(content);
-//                System.out.println(content);
-                String[] taggedWords = content.split(" ");
+                String[] taggedWords = content.trim().split("[\\s]+");
+//                for (int j = 0; j < taggedWords.length; ++j) {
+//                    System.out.println(taggedWords[j]);
+//                }
                 int index;
                 String word, tag, tagBefore = "";
-                for (int j = 0; j < taggedWords.length; ++j) {
-                    if (taggedWords[j].matches("=")) {
+                index = taggedWords[0].indexOf("/");
+                word = taggedWords[0].substring(0, index);
+                tag = taggedWords[0].substring(index + 1);
+                int order = map.get(tag);
+                ++cTransform[order][0];
+                ++cTags[order];
+                tagBefore = tag;
+                int n = taggedWords.length;
+                for (int j = 1; j < n; ++j) {
+                    if (taggedWords[j].equals("./.") && j < n - 1) {
                         ++j;
                         index = taggedWords[j].indexOf("/");
                         word = taggedWords[j].substring(0, index);
                         tag = taggedWords[j].substring(index + 1);
-                        int order = map.get(tag);
+                        order = map.get(tag);
                         ++cTransform[order][0];
                         ++cTags[order];
                         tagBefore = tag;
@@ -74,9 +84,21 @@ public class Trainer {
                     index = taggedWords[j].indexOf("/");
                     word = taggedWords[j].substring(0, index);
                     tag = taggedWords[j].substring(index + 1);
-                    
+                    order = map.get(tag);
+                    ++cTags[order];
+                    ++cTransform[map.get(tagBefore)][order];
+                    tagBefore = tag;
                 }
             }
+        }
+    }
+
+    public void printCTransform() {
+        for (int i = 0; i <= Constant.NUMBER_OF_TAGS; ++i) {
+            for (int j = 0; j <= Constant.NUMBER_OF_TAGS; ++j) {
+                System.out.printf(cTransform[i][j] + "   ");
+            }
+            System.out.println("");
         }
     }
 
@@ -84,7 +106,9 @@ public class Trainer {
         File f = new File("G:\\Training data\\POS tagging\\wsj\\functional test");
         File[] files = new File[]{f};
         try {
-            new Trainer().analyzeTrainingData(files);
+            Trainer trainer = new Trainer();
+            trainer.analyzeTrainingData(files);
+//            trainer.printCTransform();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Trainer.class.getName()).log(Level.SEVERE, null, ex);
         }
