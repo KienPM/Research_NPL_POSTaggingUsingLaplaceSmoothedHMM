@@ -25,13 +25,13 @@ public class Trainer {
     // map tag and the order of appearance in tags array
     private HashMap<String, Integer> map;
     // cTags[i] stores the frequency of tag[i]
-    private long[] cTags = new long[Constant.NUMBER_OF_TAGS];
+    private long[] cTags = new long[Constant.NUMBER_OF_TAGS + 1];
     // cTransform[i][0] stores the frequency tag[i] appears in begin of a senctence
     // cTransform[i][j] stores the frequency tag[i] appears before tag[j]
-    private long[][] cTransform = new long[Constant.NUMBER_OF_TAGS + 1][Constant.NUMBER_OF_TAGS + 1];
-    // pTransform[i][0] stores the probability tag[i] appears in begin of a senctence
-    // pTransform[i][j] stores the probability tag[i] appears after tag[j] 
-    private double[][] pTransform = new double[Constant.NUMBER_OF_TAGS + 1][Constant.NUMBER_OF_TAGS + 1];
+    private long[][] cTransition = new long[Constant.NUMBER_OF_TAGS + 1][Constant.NUMBER_OF_TAGS + 1];
+    // pTransition[i][0] stores the probability tag[i] appears in begin of a senctence
+    // pTransition[i][j] stores the probability tag[i] appears after tag[j] 
+    private double[][] pTransition = new double[Constant.NUMBER_OF_TAGS + 1][Constant.NUMBER_OF_TAGS + 1];
 
     public Trainer() throws FileNotFoundException {
         tags = Util.loadPennTreebank();
@@ -56,16 +56,13 @@ public class Trainer {
                 }
                 content = Util.toTaggedForm(content);
                 String[] taggedWords = content.trim().split("[\\s]+");
-//                for (int j = 0; j < taggedWords.length; ++j) {
-//                    System.out.println(taggedWords[j]);
-//                }
                 int index;
                 String word, tag, tagBefore = "";
                 index = taggedWords[0].indexOf("/");
                 word = taggedWords[0].substring(0, index);
                 tag = taggedWords[0].substring(index + 1);
                 int order = map.get(tag);
-                ++cTransform[order][0];
+                ++cTransition[order][0];
                 ++cTags[order];
                 tagBefore = tag;
                 int n = taggedWords.length;
@@ -76,7 +73,7 @@ public class Trainer {
                         word = taggedWords[j].substring(0, index);
                         tag = taggedWords[j].substring(index + 1);
                         order = map.get(tag);
-                        ++cTransform[order][0];
+                        ++cTransition[order][0];
                         ++cTags[order];
                         tagBefore = tag;
                         continue;
@@ -86,19 +83,27 @@ public class Trainer {
                     tag = taggedWords[j].substring(index + 1);
                     order = map.get(tag);
                     ++cTags[order];
-                    ++cTransform[map.get(tagBefore)][order];
+                    ++cTransition[map.get(tagBefore)][order];
                     tagBefore = tag;
                 }
             }
         }
     }
-
-    public void printCTransform() {
-        for (int i = 0; i <= Constant.NUMBER_OF_TAGS; ++i) {
-            for (int j = 0; j <= Constant.NUMBER_OF_TAGS; ++j) {
-                System.out.printf(cTransform[i][j] + "   ");
+    
+    public void calculatePTransition() {
+        int k = Constant.NUMBER_OF_TAGS;
+        
+        // Calculate probability of the sequence starting in tag[i]
+        long n = Util.sumColumn(cTransition, 0);
+        for (int i = 1; i <= k; ++i) {
+            pTransition[0][i] = (double) (cTransition[0][i] + 1) / (n + k);
+        }
+        
+        // Calculate probability of the sequence transitioning from tag[i] to tag[j]
+        for (int i = 1; i <= k; ++i) {
+            for (int j = 1; j <= k; ++j) {
+                pTransition[i][j] = (double) (cTransition[i][j] + 1) / (cTags[i] + k);
             }
-            System.out.println("");
         }
     }
 
@@ -108,7 +113,6 @@ public class Trainer {
         try {
             Trainer trainer = new Trainer();
             trainer.analyzeTrainingData(files);
-//            trainer.printCTransform();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Trainer.class.getName()).log(Level.SEVERE, null, ex);
         }

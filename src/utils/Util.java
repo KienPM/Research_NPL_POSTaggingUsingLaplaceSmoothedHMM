@@ -27,4 +27,20 @@ public class Util {
         }
         return result;
     }
+    
+    public static long sumRow(long[][] a, int row) {
+        long sum = 0;
+        for (int i = 0; i < a.length; ++i) {
+            sum += a[row][i];
+        }
+        return sum;
+    }
+    
+    public static long sumColumn(long[][] a, int column) {
+        long sum = 0;
+        for (int i = 0; i < a.length; ++i) {
+            sum += a[i][column];
+        }
+        return sum;
+    }
 }
