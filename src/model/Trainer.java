@@ -41,7 +41,7 @@ public class Trainer {
     // probabilities[i] (with i >= 1) is the probability this word emitted in tag i
     private HashMap<String, double[]> pEmit;
     // stores number of word in training data
-    private double wordCount;
+    private long wordCount;
 
     public Trainer() throws FileNotFoundException {
         tags = Util.loadPennTreebank();
@@ -49,16 +49,23 @@ public class Trainer {
         lexicon = new HashMap<>();
         pEmit = new HashMap<>();
         wordCount = 0;
-        mapTagAndOrder();
+        mapTagWithOrder();
     }
 
-    private void mapTagAndOrder() {
+    public void train(File[] trainingFolders) {
+        analyzeTrainingData(trainingFolders);
+        calculatePTransition();
+        calculatePEmit();
+        saveModel();
+    }
+
+    private void mapTagWithOrder() {
         for (int i = 0; i < tags.length; ++i) {
             map.put(tags[i], i + 1);
         }
     }
-    
-    public void addToLexicon(String word,int order) {
+
+    public void addToLexicon(String word, int order) {
         word = word.toLowerCase();
         if (!lexicon.containsKey(word)) {
             HashSet<Integer> temp = new HashSet<>();
@@ -138,7 +145,7 @@ public class Trainer {
             }
         }
     }
-    
+
     public void calculatePEmit() {
         int k = Constant.NUMBER_OF_TAGS;
         for (String key : lexicon.keySet()) {
@@ -147,13 +154,15 @@ public class Trainer {
             for (int i = 1; i <= k; ++i) {
                 p[i] = (double) (f[i] + 1) / (cTags[i] + wordCount);
             }
+            pEmit.put(key, p);
         }
     }
-    
+
     public void saveModel() {
-        UTF8FileUtility.createWriter("BagOfWord.txt");
-        for (String key : lexicon.keySet()) {
-            long[] a = lexicon.get(key);
+        UTF8FileUtility.createWriter(Constant.PEMIT_PATH);
+        UTF8FileUtility.write(String.valueOf(wordCount) + "\n");
+        for (String key : pEmit.keySet()) {
+            double[] a = pEmit.get(key);
             String s = key;
             for (int i = 0; i < a.length; ++i) {
                 s += " " + a[i];
@@ -161,8 +170,8 @@ public class Trainer {
             UTF8FileUtility.write(s + "\n");
         }
         UTF8FileUtility.closeWriter();
-        
-        UTF8FileUtility.createWriter("TransitionProbabilities.txt");
+
+        UTF8FileUtility.createWriter(Constant.PTRANSITION_PATH);
         for (int i = 0; i <= Constant.NUMBER_OF_TAGS; ++i) {
             String s = "";
             for (int j = 0; j <= Constant.NUMBER_OF_TAGS; ++j) {
@@ -180,6 +189,7 @@ public class Trainer {
             Trainer trainer = new Trainer();
             trainer.analyzeTrainingData(files);
             trainer.calculatePTransition();
+            trainer.calculatePEmit();
             trainer.saveModel();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Trainer.class.getName()).log(Level.SEVERE, null, ex);

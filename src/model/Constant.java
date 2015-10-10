@@ -11,5 +11,7 @@ package model;
  */
 public class Constant {
     public static int NUMBER_OF_TAGS = 45;
-    public static String PENN_TREEBANK_PATH = "Penn_Treebank.txt";
+    public static String PENN_TREEBANK_PATH = "PennTreebank.txt";
+    public static String PTRANSITION_PATH = "TransitionProbabilities.txt";
+    public static String PEMIT_PATH = "EmitProbabilites.txt";
 }
