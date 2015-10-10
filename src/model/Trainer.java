@@ -8,6 +8,7 @@ package model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,16 +33,43 @@ public class Trainer {
     // pTransition[i][0] stores the probability tag[i] appears in begin of a senctence
     // pTransition[i][j] stores the probability tag[i] appears after tag[j] 
     private double[][] pTransition = new double[Constant.NUMBER_OF_TAGS + 1][Constant.NUMBER_OF_TAGS + 1];
+    // stores individually words, each word mathes with a frequencies array
+    // frequencies[0] is the frequency of this word in training data
+    // frequencies[i] (with i >= 1) is the frequency this word emitted in tag i
+    private HashMap<String, long[]> lexicon;
+    // stores individually words, each word mathes with a probabilities array
+    // probabilities[i] (with i >= 1) is the probability this word emitted in tag i
+    private HashMap<String, double[]> pEmit;
+    // stores number of word in training data
+    private double wordCount;
 
     public Trainer() throws FileNotFoundException {
         tags = Util.loadPennTreebank();
         map = new HashMap<>();
+        lexicon = new HashMap<>();
+        pEmit = new HashMap<>();
+        wordCount = 0;
         mapTagAndOrder();
     }
 
     private void mapTagAndOrder() {
         for (int i = 0; i < tags.length; ++i) {
             map.put(tags[i], i + 1);
+        }
+    }
+    
+    public void addToLexicon(String word,int order) {
+        word = word.toLowerCase();
+        if (!lexicon.containsKey(word)) {
+            HashSet<Integer> temp = new HashSet<>();
+            long[] frequencies = new long[Constant.NUMBER_OF_TAGS + 1];
+            frequencies[0] = 1;
+            frequencies[order] = 1;
+            lexicon.put(word, frequencies);
+        } else {
+            long[] frequencies = lexicon.get(word);
+            ++frequencies[order];
+            ++frequencies[0];
         }
     }
 
@@ -64,8 +92,10 @@ public class Trainer {
                 int order = map.get(tag);
                 ++cTransition[order][0];
                 ++cTags[order];
+                addToLexicon(word, order);
                 tagBefore = tag;
                 int n = taggedWords.length;
+                wordCount += n;
                 for (int j = 1; j < n; ++j) {
                     if (taggedWords[j].equals("./.") && j < n - 1) {
                         ++j;
@@ -75,6 +105,7 @@ public class Trainer {
                         order = map.get(tag);
                         ++cTransition[order][0];
                         ++cTags[order];
+                        addToLexicon(word, order);
                         tagBefore = tag;
                         continue;
                     }
@@ -84,27 +115,62 @@ public class Trainer {
                     order = map.get(tag);
                     ++cTags[order];
                     ++cTransition[map.get(tagBefore)][order];
+                    addToLexicon(word, order);
                     tagBefore = tag;
                 }
             }
         }
     }
-    
+
     public void calculatePTransition() {
         int k = Constant.NUMBER_OF_TAGS;
-        
+
         // Calculate probability of the sequence starting in tag[i]
         long n = Util.sumColumn(cTransition, 0);
         for (int i = 1; i <= k; ++i) {
             pTransition[0][i] = (double) (cTransition[0][i] + 1) / (n + k);
         }
-        
+
         // Calculate probability of the sequence transitioning from tag[i] to tag[j]
         for (int i = 1; i <= k; ++i) {
             for (int j = 1; j <= k; ++j) {
                 pTransition[i][j] = (double) (cTransition[i][j] + 1) / (cTags[i] + k);
             }
         }
+    }
+    
+    public void calculatePEmit() {
+        int k = Constant.NUMBER_OF_TAGS;
+        for (String key : lexicon.keySet()) {
+            long[] f = lexicon.get(key);
+            double[] p = new double[k + 1];
+            for (int i = 1; i <= k; ++i) {
+                p[i] = (double) (f[i] + 1) / (cTags[i] + wordCount);
+            }
+        }
+    }
+    
+    public void saveModel() {
+        UTF8FileUtility.createWriter("BagOfWord.txt");
+        for (String key : lexicon.keySet()) {
+            long[] a = lexicon.get(key);
+            String s = key;
+            for (int i = 0; i < a.length; ++i) {
+                s += " " + a[i];
+            }
+            UTF8FileUtility.write(s + "\n");
+        }
+        UTF8FileUtility.closeWriter();
+        
+        UTF8FileUtility.createWriter("TransitionProbabilities.txt");
+        for (int i = 0; i <= Constant.NUMBER_OF_TAGS; ++i) {
+            String s = "";
+            for (int j = 0; j <= Constant.NUMBER_OF_TAGS; ++j) {
+                s += pTransition[i][j] + " ";
+            }
+            UTF8FileUtility.write(s + "\n");
+        }
+        UTF8FileUtility.closeWriter();
     }
 
     public static void main(String[] args) {
@@ -113,6 +179,8 @@ public class Trainer {
         try {
             Trainer trainer = new Trainer();
             trainer.analyzeTrainingData(files);
+            trainer.calculatePTransition();
+            trainer.saveModel();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Trainer.class.getName()).log(Level.SEVERE, null, ex);
         }
