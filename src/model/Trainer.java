@@ -91,39 +91,108 @@ public class Trainer {
                 }
                 content = Util.toTaggedForm(content);
                 String[] taggedWords = content.trim().split("[\\s]+");
-                int index;
-                String word, tag, tagBefore = "";
-                index = taggedWords[0].indexOf("/");
-                word = taggedWords[0].substring(0, index);
-                tag = taggedWords[0].substring(index + 1);
-                int order = map.get(tag);
-                ++cTransition[order][0];
-                ++cTags[order];
-                addToLexicon(word, order);
-                tagBefore = tag;
+                int index, order, nTagsBefore = 0;
+                String word, tag;
+                String[] tagsBefore = new String[3];
+                
+                // Add number of words in a file to wordCount
                 int n = taggedWords.length;
                 wordCount += n;
+                
+                // Process for first word in a file
+                index = taggedWords[0].lastIndexOf("/");
+                word = taggedWords[0].substring(0, index);
+                word = word.replace("\\/", " ");
+                tag = taggedWords[0].substring(index + 1);
+                String[] temp = tag.split("[|]");
+                nTagsBefore = temp.length;
+                for (int x = 0; x < temp.length; ++x) {
+                    order = map.get(temp[x]);
+                    ++cTransition[order][0];
+                    ++cTags[order];
+                    addToLexicon(word, order);
+                    tagsBefore[x] = temp[x];
+                }
+                
+                // Process from second word
                 for (int j = 1; j < n; ++j) {
+                    // If it a word on begin of a sentence
                     if (taggedWords[j].equals("./.") && j < n - 1) {
                         ++j;
-                        index = taggedWords[j].indexOf("/");
+                        index = taggedWords[j].lastIndexOf("/");
                         word = taggedWords[j].substring(0, index);
+                        word = word.replace("\\/", " ");
                         tag = taggedWords[j].substring(index + 1);
-                        order = map.get(tag);
-                        ++cTransition[order][0];
+                        temp = tag.split("[|]");
+                        nTagsBefore = temp.length;
+                        for (int x = 0; x < temp.length; ++x) {
+                            order = map.get(temp[x]);
+                            ++cTransition[order][0];
+                            ++cTags[order];
+                            addToLexicon(word, order);
+                            tagsBefore[x] = temp[x];
+                        }
+                        continue;
+                        
+//                        index = tag.indexOf("|");
+//                        if (index != -1) {
+//                            tag = tag.substring(0, index);
+//                        }
+//                        if (!map.containsKey(tag)) {
+//                            System.out.println(tag + " " + i + " " + k + " " + taggedWords[j]);
+//                        } else {
+//                            order = map.get(tag);
+//                            ++cTransition[order][0];
+//                            ++cTags[order];
+//                            addToLexicon(word, order);
+//                            tagBefore = tag;
+//                        }
+                        
+//                        order = map.get(tag);
+//                        ++cTransition[order][0];
+//                        ++cTags[order];
+//                        addToLexicon(word, order);
+//                        tagBefore = tag;
+//                        continue;
+                    }
+                    
+                    // If not
+                    index = taggedWords[j].lastIndexOf("/");
+                    word = taggedWords[j].substring(0, index);
+                    word = word.replace("\\/", " ");
+                    tag = taggedWords[j].substring(index + 1);
+                    temp = tag.split("[|]");
+                    for (int x = 0; x < temp.length; ++x) {
+                        order = map.get(temp[x]);
+                        for (int xx = 0; xx < nTagsBefore; ++xx) {
+                           ++cTransition[map.get(tagsBefore[xx])][order];
+                        }
                         ++cTags[order];
                         addToLexicon(word, order);
-                        tagBefore = tag;
-                        continue;
                     }
-                    index = taggedWords[j].indexOf("/");
-                    word = taggedWords[j].substring(0, index);
-                    tag = taggedWords[j].substring(index + 1);
-                    order = map.get(tag);
-                    ++cTags[order];
-                    ++cTransition[map.get(tagBefore)][order];
-                    addToLexicon(word, order);
-                    tagBefore = tag;
+                    nTagsBefore = temp.length;
+                    for (int x = 0; x < nTagsBefore; ++x) {
+                        tagsBefore[x] = temp[x];
+                    }
+//                    index = tag.indexOf("|");
+//                    if (index != -1) {
+//                        tag = tag.substring(0, index);
+//                    }
+//                    if (!map.containsKey(tag)) {
+//                        System.out.println(tag + " " + i + " " + k + " " + taggedWords[j]);
+//                    } else {
+//                        order = map.get(tag);
+//                        ++cTags[order];
+//                        ++cTransition[map.get(tagBefore)][order];
+//                        addToLexicon(word, order);
+//                        tagBefore = tag;
+//                    }
+
+//                    order = map.get(tag);
+//                    ++cTags[order];
+//                    ++cTransition[map.get(tagBefore)][order];
+//                    addToLexicon(word, order);
+//                    tagBefore = tag;
                 }
             }
         }
@@ -135,7 +204,7 @@ public class Trainer {
         // Calculate probability of the sequence starting in tag[i]
         long n = Util.sumColumn(cTransition, 0);
         for (int i = 1; i <= k; ++i) {
-            pTransition[0][i] = (double) (cTransition[0][i] + 1) / (n + k);
+            pTransition[i][0] = (double) (cTransition[i][0] + 1) / (n + k);
         }
 
         // Calculate probability of the sequence transitioning from tag[i] to tag[j]

@@ -5,6 +5,11 @@
  */
 package view;
 
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 /**
  *
  * @author Ken
@@ -16,6 +21,7 @@ public class UI extends javax.swing.JFrame {
      */
     public UI() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -45,6 +51,13 @@ public class UI extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         tblResult = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        txaPlaintextInput = new javax.swing.JTextArea();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        txaTaggedInput = new javax.swing.JTextArea();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        txaOutput = new javax.swing.JTextArea();
+        btnTag = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPennTreebank = new javax.swing.JTable();
@@ -116,10 +129,7 @@ public class UI extends javax.swing.JFrame {
 
         tblResult.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "In", "Out", "Result"
@@ -172,15 +182,53 @@ public class UI extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Testing", jPanel2);
 
+        txaPlaintextInput.setColumns(20);
+        txaPlaintextInput.setLineWrap(true);
+        txaPlaintextInput.setRows(5);
+        txaPlaintextInput.setBorder(javax.swing.BorderFactory.createTitledBorder("Plain text input"));
+        jScrollPane5.setViewportView(txaPlaintextInput);
+
+        txaTaggedInput.setColumns(20);
+        txaTaggedInput.setLineWrap(true);
+        txaTaggedInput.setRows(5);
+        txaTaggedInput.setBorder(javax.swing.BorderFactory.createTitledBorder("Tagged Input"));
+        jScrollPane6.setViewportView(txaTaggedInput);
+
+        txaOutput.setColumns(20);
+        txaOutput.setLineWrap(true);
+        txaOutput.setRows(5);
+        txaOutput.setBorder(javax.swing.BorderFactory.createTitledBorder("Result"));
+        jScrollPane7.setViewportView(txaOutput);
+
+        btnTag.setText("Tag");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 695, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6)
+                    .addComponent(jScrollPane7)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnTag)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 472, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnTag)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38))
         );
 
         jTabbedPane1.addTab("Tagging", jPanel3);
@@ -275,6 +323,7 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JButton btnBrowseTestingFolders;
     private javax.swing.JButton btnBrowseTrainingFolders;
     private javax.swing.JButton btnLoadModel;
+    private javax.swing.JButton btnTag;
     private javax.swing.JButton btnTest;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -286,12 +335,70 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable tblPennTreebank;
     private javax.swing.JTable tblResult;
+    private javax.swing.JTextArea txaOutput;
+    private javax.swing.JTextArea txaPlaintextInput;
     private javax.swing.JTextArea txaStatus;
+    private javax.swing.JTextArea txaTaggedInput;
     private javax.swing.JTextField txtTestingFolders;
     private javax.swing.JTextField txtTrainingFoldersPath;
     // End of variables declaration//GEN-END:variables
+
+    public JButton getBtnBrowseTestingFolders() {
+        return btnBrowseTestingFolders;
+    }
+
+    public JButton getBtnBrowseTrainingFolders() {
+        return btnBrowseTrainingFolders;
+    }
+
+    public JButton getBtnLoadModel() {
+        return btnLoadModel;
+    }
+
+    public JButton getBtnTag() {
+        return btnTag;
+    }
+
+    public JButton getBtnTest() {
+        return btnTest;
+    }
+
+    public JTable getTblPennTreebank() {
+        return tblPennTreebank;
+    }
+
+    public JTable getTblResult() {
+        return tblResult;
+    }
+
+    public JTextArea getTxaOutput() {
+        return txaOutput;
+    }
+
+    public JTextArea getTxaPlaintextInput() {
+        return txaPlaintextInput;
+    }
+
+    public JTextArea getTxaStatus() {
+        return txaStatus;
+    }
+
+    public JTextArea getTxaTaggedInput() {
+        return txaTaggedInput;
+    }
+
+    public JTextField getTxtTestingFolders() {
+        return txtTestingFolders;
+    }
+
+    public JTextField getTxtTrainingFoldersPath() {
+        return txtTrainingFoldersPath;
+    }
 }

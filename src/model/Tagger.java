@@ -32,6 +32,9 @@ public class Tagger {
     public Tagger() throws FileNotFoundException {
         tags = Util.loadPennTreebank();
         mapTagWithOrder();
+        pEmit = new HashMap<>();
+        loadPTransition();
+        loadPEmit();
     }
 
     private void mapTagWithOrder() {
@@ -62,6 +65,35 @@ public class Tagger {
                 p[j - 1] = Double.parseDouble(tokens[j]);
             }
             pEmit.put(tokens[0], p);
+        }
+    }
+    
+    public void tag(String sequence) {
+        String[] w = sequence.split("[\\s]+");
+        int k = Constant.NUMBER_OF_TAGS;
+        int n = w.length;
+        double[][] P = new double[n + 1][k + 1];
+        int[][] L = new int[n + 1][k + 1];
+        
+        //init
+        double[] p = pEmit.get(w[0]);
+        for (int i = 1; i <= k; ++i) {
+            P[1][i] = p[i];
+            L[1][i] = i;
+        }
+        
+        //
+        for (int r = 2; r <= n; ++r) {
+            for (int s = 2; s <= k; ++s) {
+                P[r][s] = -1;
+                p = pEmit.get(w[r]);
+                for (int j = 1; j <= k; ++j) {
+                    double temp = P[r-1][j] * p[s] * pTransition[s][j];
+                    if (temp > P[r][s]) {
+                        P[r][s] = temp;
+                    }
+                }
+            }
         }
     }
 }
