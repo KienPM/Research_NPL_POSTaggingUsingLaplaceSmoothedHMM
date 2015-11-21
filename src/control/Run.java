@@ -32,7 +32,7 @@ public class Run {
         
         try {
             Tagger tagger = new Tagger();
-            System.out.println(tagger.tag("The dog saw the cat"));
+            System.out.println(tagger.viterbi("The dog saw the cat"));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
         }

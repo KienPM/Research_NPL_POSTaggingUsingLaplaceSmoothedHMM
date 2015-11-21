@@ -128,37 +128,54 @@ public class Tagger {
         }
         return result;
     }
-    
-    private String viterbi(String sequence) {
+
+    public String viterbi(String sequence) {
         String[] w = sequence.split("[\\s]+");
         int n = w.length;
         int k = Constant.NUMBER_OF_TAGS;
         double[][] P = new double[n + 1][k + 1];
         String[][] L = new String[n + 1][k + 1];
-        
+
         // Init
-        double[] pe = pEmit.get(w[0]);
+        double[] pe;
+        if (pEmit.containsKey(w[0].toLowerCase())) {
+            pe = pEmit.get(w[0].toLowerCase());
+        } else {
+            double x = (double) 1 / k;
+            pe = new double[k + 1];
+            for (int j = 1; j <= k; ++j) {
+                pe[j] = x;
+            }
+        }
         for (int s = 1; s <= k; ++s) {
             P[1][s] = pe[s] * pTransition[s][0];
             L[1][s] = s + "|";
         }
-        
+
         // Loop
         for (int r = 2; r <= n; ++r) {
-            pe = pEmit.get(w[r -1]);
-            int argmax = Util.indexMaxOfRow(P, r -1);
+            if (pEmit.containsKey(w[r - 1].toLowerCase())) {
+                pe = pEmit.get(w[r - 1].toLowerCase());
+            } else {
+                double x = (double) 1 / k;
+                pe = new double[k + 1];
+                for (int j = 1; j <= k; ++j) {
+                    pe[j] = x;
+                }
+            }
+            int argmax = Util.indexMaxOfRow(P, r - 1);
             for (int s = 1; s <= k; ++s) {
                 P[r][s] = P[r - 1][argmax] * pe[s] * pTransition[argmax][s];
                 L[r][s] = L[r - 1][argmax] + s + "|";
             }
         }
-        
+
         // Result
         String tagSequence = L[n][Util.indexMaxOfRow(P, n)];
         String[] tagInedexes = tagSequence.split("[|]");
         String result = "";
         for (int i = 0; i < n; ++i) {
-            result += w[i] + "/" + tags[Integer.parseInt(tagInedexes[i])];
+            result += w[i] + "/" + tags[Integer.parseInt(tagInedexes[i])] + " ";
         }
         return result;
     }
