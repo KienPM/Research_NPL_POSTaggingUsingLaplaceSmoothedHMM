@@ -148,7 +148,7 @@ public class Tagger {
             }
         }
         for (int s = 1; s <= k; ++s) {
-            P[1][s] = pe[s] * pTransition[s][0];
+            P[1][s] = Math.log(pe[s]) + Math.log(pTransition[s][0]);
             L[1][s] = s + "|";
         }
 
@@ -157,7 +157,7 @@ public class Tagger {
             if (pEmit.containsKey(w[r - 1].toLowerCase())) {
                 pe = pEmit.get(w[r - 1].toLowerCase());
             } else {
-                double x = (double) 1 / k;
+                double x = 1.0 / k;
                 pe = new double[k + 1];
                 for (int j = 1; j <= k; ++j) {
                     pe[j] = x;
@@ -165,11 +165,20 @@ public class Tagger {
             }
             int argmax = Util.indexMaxOfRow(P, r - 1);
             for (int s = 1; s <= k; ++s) {
-                P[r][s] = P[r - 1][argmax] * pe[s] * pTransition[argmax][s];
+                System.out.print(pe[s] + "|" + pTransition[argmax][s] + " ");
+                P[r][s] = P[r - 1][argmax] + Math.log(pe[s]) + Math.log(pTransition[argmax][s]);
                 L[r][s] = L[r - 1][argmax] + s + "|";
             }
+            System.out.println("");
         }
 
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= k; ++j) {
+                System.out.print(P[i][j] + "   ");
+                
+            }
+            System.out.println("");
+        }
         // Result
         String tagSequence = L[n][Util.indexMaxOfRow(P, n)];
         String[] tagInedexes = tagSequence.split("[|]");
