@@ -60,32 +60,12 @@ public class Util {
         }
         return sum;
     }
-
-    public static double maxOfColumn(double[][] a, int column) {
-        double result = a[0][column];
-        for (int i = 1; i < a.length; ++i) {
-            if (a[i][column] > result) {
-                result = a[i][column];
-            }
-        }
-        return result;
-    }
     
-    public static int indexMaxOfColumn(double[][] a, int column) {
-        int index = 0;
-        for (int i = 1; i < a.length; ++i) {
-            if (a[i][column] > a[index][column]) {
-                index = i;
-            }
-        }
-        return index;
-    }
-    
-    public static int indexMaxOfColumn(int[][] a, int column) {
-        int index = 0;
-        for (int i = 1; i < a.length; ++i) {
-            if (a[i][column] > a[index][column]) {
-                index = i;
+    public static int indexMaxOfRow(double[][] a, int row) {
+        int index = 1;
+        for (int j = 2; j < a[0].length; ++j) {
+            if (a[row][j] < a[index][j]) {
+                index = j;
             }
         }
         return index;

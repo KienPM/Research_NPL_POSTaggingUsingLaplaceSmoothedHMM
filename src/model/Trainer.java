@@ -102,7 +102,7 @@ public class Trainer {
                 // Process for first word in a file
                 index = taggedWords[0].lastIndexOf("/");
                 word = taggedWords[0].substring(0, index);
-                word = word.replace("\\/", " ");
+//                word = word.replace("\\/", " ");
                 tag = taggedWords[0].substring(index + 1);
                 String[] temp = tag.split("[|]");
                 nTagsBefore = temp.length;
@@ -121,7 +121,7 @@ public class Trainer {
                         ++j;
                         index = taggedWords[j].lastIndexOf("/");
                         word = taggedWords[j].substring(0, index);
-                        word = word.replace("\\/", " ");
+//                        word = word.replace("\\/", " ");
                         tag = taggedWords[j].substring(index + 1);
                         temp = tag.split("[|]");
                         nTagsBefore = temp.length;
@@ -159,7 +159,7 @@ public class Trainer {
                     // If not
                     index = taggedWords[j].lastIndexOf("/");
                     word = taggedWords[j].substring(0, index);
-                    word = word.replace("\\/", " ");
+//                    word = word.replace("\\/", " ");
                     tag = taggedWords[j].substring(index + 1);
                     temp = tag.split("[|]");
                     for (int x = 0; x < temp.length; ++x) {
@@ -229,7 +229,7 @@ public class Trainer {
 
     public void saveModel() {
         UTF8FileUtility.createWriter(Constant.PEMIT_PATH);
-        UTF8FileUtility.write(String.valueOf(wordCount) + "\n");
+        UTF8FileUtility.write(String.valueOf(pEmit.size()) + "\n");
         for (String key : pEmit.keySet()) {
             double[] a = pEmit.get(key);
             String s = key;
