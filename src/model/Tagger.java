@@ -46,7 +46,7 @@ public class Tagger {
     private void loadPTransition() throws FileNotFoundException {
         Scanner scanner = new Scanner(new FileInputStream(Constant.PTRANSITION_PATH));
         int k = Constant.NUMBER_OF_TAGS;
-        for (int i = 1; i <= k; ++i) {
+        for (int i = 0; i <= k; ++i) {
             for (int j = 0; j <= k; ++j) {
                 pTransition[i][j] = scanner.nextDouble();
             }
@@ -62,7 +62,7 @@ public class Tagger {
             String s = scanner.nextLine();
             String[] tokens = s.trim().split("[\\s]+");
             double[] p = new double[k + 1];
-            for (int j = 2; j <= k; ++j) {
+            for (int j = 2; j <= k + 1; ++j) {
                 try {
                     p[j - 1] = Double.parseDouble(tokens[j]);
                 } catch (NumberFormatException ex) {
@@ -147,10 +147,13 @@ public class Tagger {
                 pe[j] = x;
             }
         }
+        
         for (int s = 1; s <= k; ++s) {
+//            System.out.print(pe[s] + "|" + pTransition[s][0] + " ");
             P[1][s] = Math.log(pe[s]) + Math.log(pTransition[s][0]);
             L[1][s] = s + "|";
         }
+//        System.out.println("a");
 
         // Loop
         for (int r = 2; r <= n; ++r) {
@@ -165,19 +168,20 @@ public class Tagger {
             }
             int argmax = Util.indexMaxOfRow(P, r - 1);
             for (int s = 1; s <= k; ++s) {
-                System.out.print(pe[s] + "|" + pTransition[argmax][s] + " ");
+//                System.out.print(pe[s] + "|" + pTransition[argmax][s] + " ");
                 P[r][s] = P[r - 1][argmax] + Math.log(pe[s]) + Math.log(pTransition[argmax][s]);
                 L[r][s] = L[r - 1][argmax] + s + "|";
             }
-            System.out.println("");
+//            System.out.println("");
+            
         }
 
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= k; ++j) {
-                System.out.print(P[i][j] + "   ");
+//                System.out.print(P[i][j] + "   ");
                 
             }
-            System.out.println("");
+//            System.out.println("");
         }
         // Result
         String tagSequence = L[n][Util.indexMaxOfRow(P, n)];

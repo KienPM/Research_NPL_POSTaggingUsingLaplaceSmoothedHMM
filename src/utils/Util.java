@@ -64,7 +64,7 @@ public class Util {
     public static int indexMaxOfRow(double[][] a, int row) {
         int index = 1;
         for (int j = 2; j < a[0].length; ++j) {
-            if (a[row][j] < a[index][j]) {
+            if (a[row][j] > a[row][index]) {
                 index = j;
             }
         }
