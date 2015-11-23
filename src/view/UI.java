@@ -6,6 +6,7 @@
 package view;
 
 import javax.swing.JButton;
+import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -35,18 +36,20 @@ public class UI extends javax.swing.JFrame {
 
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
+        btnLoadModel = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         txtTrainingFoldersPath = new javax.swing.JTextField();
         btnBrowseTrainingFolders = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         txaStatus = new javax.swing.JTextArea();
+        btnTrain = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txtTestingFolders = new javax.swing.JTextField();
         btnBrowseTestingFolders = new javax.swing.JButton();
-        btnLoadModel = new javax.swing.JButton();
         btnTest = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         tblResult = new javax.swing.JTable();
@@ -58,6 +61,8 @@ public class UI extends javax.swing.JFrame {
         jScrollPane7 = new javax.swing.JScrollPane();
         txaOutput = new javax.swing.JTextArea();
         btnTag = new javax.swing.JButton();
+        radPlainText = new javax.swing.JRadioButton();
+        radTagged = new javax.swing.JRadioButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPennTreebank = new javax.swing.JTable();
@@ -77,6 +82,8 @@ public class UI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        btnLoadModel.setText("Load Model");
+
         jLabel1.setText("Training data folders");
 
         txtTrainingFoldersPath.setEditable(false);
@@ -87,22 +94,29 @@ public class UI extends javax.swing.JFrame {
         txaStatus.setRows(5);
         jScrollPane3.setViewportView(txaStatus);
 
+        btnTrain.setText("Train");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(261, 261, 261)
+                .addComponent(btnTrain)
+                .addGap(32, 32, 32)
+                .addComponent(btnLoadModel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane3)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtTrainingFoldersPath, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBrowseTrainingFolders)
-                        .addGap(0, 18, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(btnBrowseTrainingFolders)))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,8 +126,12 @@ public class UI extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(txtTrainingFoldersPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBrowseTrainingFolders))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnTrain)
+                    .addComponent(btnLoadModel))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -122,8 +140,6 @@ public class UI extends javax.swing.JFrame {
         jLabel2.setText("Testing data folders");
 
         btnBrowseTestingFolders.setText("Browse");
-
-        btnLoadModel.setText("Load Model");
 
         btnTest.setText("Test");
 
@@ -153,9 +169,7 @@ public class UI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnBrowseTestingFolders))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(218, 218, 218)
-                                .addComponent(btnLoadModel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(315, 315, 315)
                                 .addComponent(btnTest)))
                         .addGap(0, 19, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -172,9 +186,7 @@ public class UI extends javax.swing.JFrame {
                     .addComponent(txtTestingFolders, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBrowseTestingFolders))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnLoadModel)
-                    .addComponent(btnTest))
+                .addComponent(btnTest)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
                 .addContainerGap())
@@ -202,6 +214,13 @@ public class UI extends javax.swing.JFrame {
 
         btnTag.setText("Tag");
 
+        buttonGroup1.add(radPlainText);
+        radPlainText.setSelected(true);
+        radPlainText.setText("Plain text");
+
+        buttonGroup1.add(radTagged);
+        radTagged.setText("Tagged");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -213,6 +232,10 @@ public class UI extends javax.swing.JFrame {
                     .addComponent(jScrollPane6)
                     .addComponent(jScrollPane7)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(radPlainText)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(radTagged)
+                        .addGap(10, 10, 10)
                         .addComponent(btnTag)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -225,7 +248,10 @@ public class UI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnTag)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnTag)
+                    .addComponent(radPlainText)
+                    .addComponent(radTagged))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38))
@@ -325,6 +351,8 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JButton btnLoadModel;
     private javax.swing.JButton btnTag;
     private javax.swing.JButton btnTest;
+    private javax.swing.JButton btnTrain;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -340,6 +368,8 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JRadioButton radPlainText;
+    private javax.swing.JRadioButton radTagged;
     private javax.swing.JTable tblPennTreebank;
     private javax.swing.JTable tblResult;
     private javax.swing.JTextArea txaOutput;
@@ -401,4 +431,17 @@ public class UI extends javax.swing.JFrame {
     public JTextField getTxtTrainingFoldersPath() {
         return txtTrainingFoldersPath;
     }
+
+    public JButton getBtnTrain() {
+        return btnTrain;
+    }
+
+    public JRadioButton getRadPlainText() {
+        return radPlainText;
+    }
+
+    public JRadioButton getRadTagged() {
+        return radTagged;
+    }
+
 }

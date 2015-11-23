@@ -23,7 +23,7 @@ public class Tagger {
     private HashMap<String, Integer> map;
     // pTransition[i][0] stores the probability tag[i] appears in begin of a senctence
     // pTransition[i][j] stores the probability tag[i] appears after tag[j] 
-    private double[][] pTransition = new double[Constant.NUMBER_OF_TAGS + 1][Constant.NUMBER_OF_TAGS + 1];
+    private double[][] pTransition;
     // stores individually words, each word mathes with a probabilities array
     // probabilities[i] (with i >= 1) is the probability this word emitted in tag i
     private HashMap<String, double[]> pEmit;
@@ -33,14 +33,19 @@ public class Tagger {
         map = new HashMap<>();
         mapTagWithOrder();
         pEmit = new HashMap<>();
-        loadPTransition();
-        loadPEmit();
+        pTransition = new double[Constant.NUMBER_OF_TAGS + 1][Constant.NUMBER_OF_TAGS + 1];
+        loadModel();
     }
 
     private void mapTagWithOrder() {
         for (int i = 0; i < tags.length; ++i) {
             map.put(tags[i], i + 1);
         }
+    }
+    
+    public void loadModel() throws FileNotFoundException {
+        loadPTransition();
+        loadPEmit();
     }
 
     private void loadPTransition() throws FileNotFoundException {

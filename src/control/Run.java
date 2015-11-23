@@ -20,7 +20,7 @@ public class Run {
 
     public static void main(String[] args) {
 
-//        File f = new File("G:\\Training data\\POS tagging\\wsj");
+            //        File f = new File("G:\\Training data\\POS tagging\\wsj");
 //        File[] files = f.listFiles();
 //        Trainer trainer;
 //        try {
@@ -29,10 +29,14 @@ public class Run {
 //        } catch (FileNotFoundException ex) {
 //            Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        
+//        try {
+//            Tagger tagger = new Tagger();
+//            System.out.println(tagger.viterbi("Time flies like an arrow"));
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         try {
-            Tagger tagger = new Tagger();
-            System.out.println(tagger.viterbi("Time flies like an arrow"));
+            Controler controler = new Controler();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
         }
