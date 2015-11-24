@@ -15,8 +15,8 @@ NNP Proper noun, singular
 NNPS Proper noun, plural
 PDT Predeterminer
 POS Possessive ending
-PP Personal pronoun
-PP$ Possessive pronoun
+PRP Personal pronoun
+PRP$ Possessive pronoun
 RB Adverb
 RBR Adverb, comparative
 RBS Adverb, superlative 
@@ -43,4 +43,3 @@ $ Dollar sign
 , Comma
 . Sentence-final punctuation
 : Colon,semicolon
-	

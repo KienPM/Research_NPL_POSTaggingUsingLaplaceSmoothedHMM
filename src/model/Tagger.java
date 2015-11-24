@@ -79,61 +79,6 @@ public class Tagger {
         }
     }
 
-    public String tag(String sequence) {
-        String[] w = sequence.split("[\\s]+");
-        int m = w.length;
-        int k = Constant.NUMBER_OF_TAGS;
-        int[] t = new int[m];
-        double maxP = 0;
-        int argmax = 0;
-        double[] p = new double[k + 1];;
-        if (pEmit.containsKey(w[0].toLowerCase())) {
-            p = pEmit.get(w[0].toLowerCase());
-        } else {
-            double x = (double) 1 / k;
-            for (int j = 1; j <= k; ++j) {
-                p[j] = x;
-            }
-        }
-        for (int j = 1; j <= k; ++j) {
-            double temp = p[j] * pTransition[j][0];
-//            System.out.println(temp);
-            if (temp > maxP) {
-                argmax = j;
-                maxP = temp;
-            }
-        }
-        t[0] = argmax;
-
-        for (int i = 1; i < m; ++i) {
-            if (pEmit.containsKey(w[i].toLowerCase())) {
-                p = pEmit.get(w[i].toLowerCase());
-            } else {
-                p = new double[k + 1];
-                double x = (double) 1 / k;
-                for (int j = 1; j <= k; ++j) {
-                    p[j] = x;
-                }
-            }
-            maxP = 0;
-            argmax = 0;
-            for (int j = 1; j <= k; ++j) {
-                double temp = p[j] + pTransition[t[i - 1]][j];
-                if (temp > maxP) {
-                    argmax = j;
-                    maxP = temp;
-                }
-            }
-            t[i] = argmax;
-        }
-
-        String result = "";
-        for (int i = 0; i < m; ++i) {
-            result += w[i] + "/" + tags[t[i]] + " ";
-        }
-        return result;
-    }
-
     public String viterbi(String sequence) {
         String[] w = sequence.split("[\\s]+");
         int n = w.length;
@@ -154,11 +99,9 @@ public class Tagger {
         }
         
         for (int s = 1; s <= k; ++s) {
-//            System.out.print(pe[s] + "|" + pTransition[s][0] + " ");
             P[1][s] = Math.log(pe[s]) + Math.log(pTransition[s][0]);
             L[1][s] = s + "|";
         }
-//        System.out.println("a");
 
         // Loop
         for (int r = 2; r <= n; ++r) {
@@ -173,27 +116,23 @@ public class Tagger {
             }
             int argmax = Util.indexMaxOfRow(P, r - 1);
             for (int s = 1; s <= k; ++s) {
-//                System.out.print(pe[s] + "|" + pTransition[argmax][s] + " ");
                 P[r][s] = P[r - 1][argmax] + Math.log(pe[s]) + Math.log(pTransition[argmax][s]);
                 L[r][s] = L[r - 1][argmax] + s + "|";
             }
-//            System.out.println("");
             
         }
 
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= k; ++j) {
-//                System.out.print(P[i][j] + "   ");
                 
             }
-//            System.out.println("");
         }
         // Result
         String tagSequence = L[n][Util.indexMaxOfRow(P, n)];
         String[] tagInedexes = tagSequence.split("[|]");
         String result = "";
         for (int i = 0; i < n; ++i) {
-            result += w[i] + "/" + tags[Integer.parseInt(tagInedexes[i])] + " ";
+            result += w[i] + "/" + tags[Integer.parseInt(tagInedexes[i]) - 1] + " ";
         }
         return result;
     }

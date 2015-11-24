@@ -139,6 +139,8 @@ public class UI extends javax.swing.JFrame {
 
         jLabel2.setText("Testing data folders");
 
+        txtTestingFolders.setEditable(false);
+
         btnBrowseTestingFolders.setText("Browse");
 
         btnTest.setText("Test");
@@ -148,7 +150,7 @@ public class UI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "In", "Out", "Result"
+                "Input", "Output"
             }
         ));
         jScrollPane4.setViewportView(tblResult);
@@ -338,10 +340,8 @@ public class UI extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new UI().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new UI().setVisible(true);
         });
     }
 

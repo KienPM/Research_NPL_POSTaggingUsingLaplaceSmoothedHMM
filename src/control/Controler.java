@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import model.Constant;
 import model.Tagger;
 import model.Trainer;
+import utils.Util;
 import view.UI;
 import vn.hus.nlp.utils.UTF8FileUtility;
 
@@ -95,6 +96,9 @@ public class Controler {
     }
 
     public void onClickTrain() {
+        if (trainingFolders == null || trainingFolders.length == 0) {
+            JOptionPane.showMessageDialog(view, "Please select training folders!");
+        }
         view.getTxaStatus().setText("Training...\nWaiting...\n");
         trainer.train(trainingFolders);
         try {
@@ -130,12 +134,64 @@ public class Controler {
             for (int i = 0; i < testingFolders.length; ++i) {
                 s += testingFolders[i].getName() + ";";
             }
-            view.getTxtTrainingFoldersPath().setText(s);
+            view.getTxtTestingFolders().setText(s);
         }
     }
 
     public void onClickTest() {
+        if (testingFolders == null || testingFolders.length == 0) {
+            JOptionPane.showMessageDialog(view, "Please select testing folders!");
+        }
+        if (!isLoadedModel) {
+            try {
+                tagger.loadModel();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Controler.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(view, "Load model failed!");
+                return;
+            }
+        }
+        int countWord = 0, countCorrectWord = 0;
+        DefaultTableModel dtm = (DefaultTableModel) view.getTblResult().getModel();
+        dtm.getDataVector().removeAllElements();
 
+        // For each testing folder
+        for (int i = 0; i < testingFolders.length; ++i) {
+            File[] files = testingFolders[i].listFiles();
+            // For each file
+            for (int k = 0; k < files.length; ++k) {
+                String[] lines = UTF8FileUtility.getLines(files[k].getAbsolutePath());
+                String content = "";
+                for (int j = 0; j < lines.length; ++j) {
+                    content += lines[j] + " ";
+                }
+                content = Util.toTaggedForm(content);
+                String[] taggedWords = content.trim().split("[\\s]+");
+                countWord += taggedWords.length;
+
+                String input = "";
+                for (int x = 0; x < taggedWords.length; ++x) {
+                    input += taggedWords[x].substring(0, taggedWords[x].indexOf("/")) + " ";
+                }
+                String output = tagger.viterbi(input);
+                dtm.addRow(new Object[]{input, output});
+                
+                String[] temp = output.split("[\\s]+");
+                for (int x = 0; x < temp.length; ++x) {
+                    String tag1 = taggedWords[x].substring(taggedWords[x].lastIndexOf("/"));
+                    String tag2 = temp[x].substring(temp[x].lastIndexOf("/"));
+                    String[] tags = tag1.split("[|]");
+                    for (int xx = 0; xx < tags.length; ++xx) {
+                        if (tag2.equalsIgnoreCase(tags[xx])) {
+                            ++countCorrectWord;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        JOptionPane.showMessageDialog(view, "Corrects " + 1.0 * countCorrectWord  * 100 / countWord + "%");
     }
 
     public void onClickTag() {
