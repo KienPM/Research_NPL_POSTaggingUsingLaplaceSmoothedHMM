@@ -60,8 +60,8 @@ public class Trainer {
     }
 
     private void mapTagWithOrder() {
-        for (int i = 0; i < tags.length; ++i) {
-            map.put(tags[i], i + 1);
+        for (int i = 1; i < tags.length; ++i) {
+            map.put(tags[i], i);
         }
     }
 

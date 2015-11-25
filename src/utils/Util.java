@@ -21,9 +21,9 @@ public class Util {
     }
 
     public static String[] loadPennTreebank() throws FileNotFoundException {
-        String[] result = new String[Constant.NUMBER_OF_TAGS];
+        String[] result = new String[Constant.NUMBER_OF_TAGS + 1];
         Scanner scanner = new Scanner(new FileInputStream(Constant.PENN_TREEBANK_PATH));
-        for (int i = 0; i < Constant.NUMBER_OF_TAGS; ++i) {
+        for (int i = 1; i <= Constant.NUMBER_OF_TAGS; ++i) {
             result[i] = scanner.nextLine().trim();
         }
         return result;

@@ -165,33 +165,43 @@ public class Controler {
                 for (int j = 0; j < lines.length; ++j) {
                     content += lines[j] + " ";
                 }
-                content = Util.toTaggedForm(content);
-                String[] taggedWords = content.trim().split("[\\s]+");
-                countWord += taggedWords.length;
+                String[] sentences = content.split("[=]+");
+                for (int j = 0; j < sentences.length; ++j) {
+                    if (sentences[j].equals("") || sentences[j].equals("\n") || sentences[j].equals(" ")) {
+                        continue;
+                    }
+                    sentences[j] = Util.toTaggedForm(sentences[j]);
+                    String[] taggedWords = sentences[j].trim().split("[\\s]+");
+                    countWord += taggedWords.length;
 
-                String input = "";
-                for (int x = 0; x < taggedWords.length; ++x) {
-                    input += taggedWords[x].substring(0, taggedWords[x].indexOf("/")) + " ";
-                }
-                String output = tagger.viterbi(input);
-                dtm.addRow(new Object[]{input, output});
-                
-                String[] temp = output.split("[\\s]+");
-                for (int x = 0; x < temp.length; ++x) {
-                    String tag1 = taggedWords[x].substring(taggedWords[x].lastIndexOf("/"));
-                    String tag2 = temp[x].substring(temp[x].lastIndexOf("/"));
-                    String[] tags = tag1.split("[|]");
-                    for (int xx = 0; xx < tags.length; ++xx) {
-                        if (tag2.equalsIgnoreCase(tags[xx])) {
-                            ++countCorrectWord;
-                            break;
+                    String input = "";
+                    for (int x = 0; x < taggedWords.length; ++x) {
+                        input += taggedWords[x].substring(0, taggedWords[x].indexOf("/")) + " ";
+                    }
+                    String output = tagger.viterbi(input);
+                    dtm.addRow(new Object[]{input, output});
+
+                    /*
+                     Because a word in testing data can has many tag
+                     So we must check fot each tag
+                     */
+                    String[] temp = output.split("[\\s]+");
+                    for (int x = 0; x < temp.length; ++x) {
+                        String tag1 = taggedWords[x].substring(taggedWords[x].lastIndexOf("/"));
+                        String tag2 = temp[x].substring(temp[x].lastIndexOf("/"));
+                        String[] tags = tag1.split("[|]");
+                        for (int xx = 0; xx < tags.length; ++xx) {
+                            if (tag2.equalsIgnoreCase(tags[xx])) {
+                                ++countCorrectWord;
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
-        
-        JOptionPane.showMessageDialog(view, "Corrects " + 1.0 * countCorrectWord  * 100 / countWord + "%");
+
+        JOptionPane.showMessageDialog(view, "Corrects " + 1.0 * countCorrectWord * 100 / countWord + "%");
     }
 
     public void onClickTag() {

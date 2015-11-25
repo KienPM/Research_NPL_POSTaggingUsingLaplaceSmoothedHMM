@@ -27,6 +27,8 @@ public class Tagger {
     // stores individually words, each word mathes with a probabilities array
     // probabilities[i] (with i >= 1) is the probability this word emitted in tag i
     private HashMap<String, double[]> pEmit;
+    private double[][] P = new double[500][Constant.NUMBER_OF_TAGS + 1];
+    private String[][] L = new String[500][Constant.NUMBER_OF_TAGS + 1];
 
     public Tagger() throws FileNotFoundException {
         tags = Util.loadPennTreebank();
@@ -38,11 +40,11 @@ public class Tagger {
     }
 
     private void mapTagWithOrder() {
-        for (int i = 0; i < tags.length; ++i) {
-            map.put(tags[i], i + 1);
+        for (int i = 1; i < tags.length; ++i) {
+            map.put(tags[i], i);
         }
     }
-    
+
     public void loadModel() throws FileNotFoundException {
         loadPTransition();
         loadPEmit();
@@ -83,8 +85,6 @@ public class Tagger {
         String[] w = sequence.split("[\\s]+");
         int n = w.length;
         int k = Constant.NUMBER_OF_TAGS;
-        double[][] P = new double[n + 1][k + 1];
-        String[][] L = new String[n + 1][k + 1];
 
         // Init
         double[] pe;
@@ -97,7 +97,7 @@ public class Tagger {
                 pe[j] = x;
             }
         }
-        
+
         for (int s = 1; s <= k; ++s) {
             P[1][s] = Math.log(pe[s]) + Math.log(pTransition[s][0]);
             L[1][s] = s + "|";
@@ -119,12 +119,12 @@ public class Tagger {
                 P[r][s] = P[r - 1][argmax] + Math.log(pe[s]) + Math.log(pTransition[argmax][s]);
                 L[r][s] = L[r - 1][argmax] + s + "|";
             }
-            
+
         }
 
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= k; ++j) {
-                
+
             }
         }
         // Result
@@ -132,7 +132,7 @@ public class Tagger {
         String[] tagInedexes = tagSequence.split("[|]");
         String result = "";
         for (int i = 0; i < n; ++i) {
-            result += w[i] + "/" + tags[Integer.parseInt(tagInedexes[i]) - 1] + " ";
+            result += w[i] + "/" + tags[Integer.parseInt(tagInedexes[i])] + " ";
         }
         return result;
     }
